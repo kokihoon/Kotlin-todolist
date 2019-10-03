@@ -9,10 +9,15 @@ import com.example.myapplication.View.ILoginView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),ILoginView {
-
-    override fun onLoginResult(message: String) {
+    override fun onLoginError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun onLoginSuccess(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+
     internal lateinit var loginPresenter: ILoginPresenter
 
 
