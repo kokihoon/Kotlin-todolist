@@ -2,8 +2,27 @@ package com.example.myapplication.Model
 
 import android.text.TextUtils
 import android.util.Patterns
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class User(override val email:String, override  val password:String):IUser {
+
+@Entity(tableName="users")
+class User(
+    @NonNull
+    @PrimaryKey
+    @ColumnInfo(name="id")
+    override val id:Int =0,
+
+    @ColumnInfo(name="email")
+    override val email:String,
+    @ColumnInfo(name="password")
+    override val password:String
+
+    ):IUser {
+
+
     override fun isDataValid(): Int {
         if(TextUtils.isEmpty(email))
             return 0 // 0 error code is email empty
