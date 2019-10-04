@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
     <LinearLayout
         android:id="@+id/login_layout"
         android:orientation="vertical"
@@ -25,28 +29,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Button
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_login1"
             android:text="LOGIN"
             android:padding="8dp"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <Button
-            android:id="@+id/btn_register"
+            android:id="@+id/btn_register1"
             android:text="REGISTER"
             android:padding="8dp"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-    <include
-        android:id="@+id/registration_layout"
-        android:visibility="gone"
-        layout="@layout/user_registration"
-        />
-    <include
-        android:id="@+id/main_layout"
-        android:visibility="gone"
-        layout="@layout/activity_main"
-        />
 </LinearLayout>

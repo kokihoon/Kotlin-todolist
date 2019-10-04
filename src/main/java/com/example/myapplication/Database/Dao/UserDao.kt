@@ -14,5 +14,8 @@ interface UserDao {
     fun insert(user : User)
 
     @Query("SELECT * FROM users WHERE email = :email")
-    fun selectUser(email: String): User
+    fun checkEmail(email: String): User
+
+    @Query("SELECT * FROM users WHERE email = :email AND password = :password")
+    fun selectUser(email: String, password:String):User
 }

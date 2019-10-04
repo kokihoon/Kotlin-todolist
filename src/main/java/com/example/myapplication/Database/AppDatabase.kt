@@ -11,8 +11,7 @@ import com.example.myapplication.Model.User
     entities = [
     User::class
     ],
-    version = 1,
-    exportSchema = false
+    version = 1
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun userDao(): UserDao
