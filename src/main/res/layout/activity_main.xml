@@ -13,11 +13,18 @@
        android:layout_height="wrap_content">
 
       <TextView
-          android:id="@+id/textView"
+          android:id="@+id/username"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="메인화면" />
 
+      <Button
+          android:id="@+id/btn_logout"
+          android:text="LOGOUT"
+          android:padding="8dp"
+          style="@style/Widget.AppCompat.Button.Colored"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
 
    </LinearLayout>
 </RelativeLayout>

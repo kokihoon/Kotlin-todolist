@@ -6,13 +6,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.Database.AppDatabase
 import com.example.myapplication.Database.Helper.DatabaseWorker
 import com.example.myapplication.Model.User
 import kotlinx.android.synthetic.main.activity_register.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -62,16 +59,14 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun checkEmail(user:User):Boolean {
         var check = true
-        lifecycleScope.launch(Dispatchers.IO) { //비동기 처리 안됨
 
-            val task = Runnable {
-                val userData = mDb?.userDao()?.checkEmail(user.email)
-                if (userData == null) {
-                    check = false
-                }
+        val task = Runnable {
+            val userData = mDb?.userDao()?.checkEmail(user.email)
+            if (userData == null) {
+                check = false
             }
-            mDatabaseWorker.postTask(task)
         }
+        mDatabaseWorker.postTask(task)
         return check
     }
 

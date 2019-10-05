@@ -1,28 +1,25 @@
 package com.example.myapplication
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.lifecycleScope
+import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.Database.AppDatabase
 import com.example.myapplication.Database.Helper.DatabaseWorker
 import com.example.myapplication.Model.User
 import com.example.myapplication.Presenter.ILoginPresenter
 import com.example.myapplication.Presenter.LoginPresenter
+import com.example.myapplication.Utils.SessionManager
 import com.example.myapplication.View.ILoginView
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity(),ILoginView {
 
     private var mDb: AppDatabase? = null
     private lateinit var mDatabaseWorker: DatabaseWorker
-    private val mUIHandler = Handler()
+    lateinit var session: SessionManager
+
 
     override fun onLoginError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -39,6 +36,7 @@ class LoginActivity : AppCompatActivity(),ILoginView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        session = SessionManager(applicationContext)
 
         mDatabaseWorker = DatabaseWorker("dbWorkerThread")
         mDatabaseWorker.start()
@@ -46,7 +44,15 @@ class LoginActivity : AppCompatActivity(),ILoginView {
         mDb = AppDatabase.getInstance(this)
 
         //init
-        loginPresenter = LoginPresenter(this);
+        loginPresenter = LoginPresenter(this)
+
+        if(session.isLoggedIn()) {
+            var i: Intent = Intent(applicationContext, MainActivity::class.java)
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(i)
+            finish()
+        }
 
         //Event
         btn_login1.setOnClickListener {
@@ -62,12 +68,18 @@ class LoginActivity : AppCompatActivity(),ILoginView {
     }
 
     public fun viewData() {
+        val edt_email = edt_email.text.toString()
+        val edt_password = edt_password.text.toString()
+        val experienced = auto_login.isChecked
+
         val task = Runnable {
             val userData: User?
-            userData = mDb?.userDao()?.selectUser(edt_email.text.toString(), edt_password.text.toString())
+            userData = mDb?.userDao()?.selectUser(edt_email, edt_password)
             if(userData != null) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                if(experienced) {
+                    session.createLoginSession(edt_email)
+                }
+                var i:Intent = Intent(applicationContext, MainActivity::class.java)
                 finish()
             } else {
                 Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
@@ -75,8 +87,6 @@ class LoginActivity : AppCompatActivity(),ILoginView {
             }
         }
         mDatabaseWorker.postTask(task)
-
-
     }
     private fun showMessage(message:String) {
         AlertDialog
