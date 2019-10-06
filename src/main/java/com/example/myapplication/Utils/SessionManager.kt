@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import com.example.myapplication.LoginActivity
 import com.example.myapplication.MainActivity
 
-public class SessionManager {
+class SessionManager {
 
     lateinit var pref: SharedPreferences
     lateinit var editor: SharedPreferences.Editor
@@ -25,36 +25,37 @@ public class SessionManager {
         val KEY_EMAIL: String = "email"
     }
 
-    fun createLoginSession(email: String) {
-        editor.putBoolean(IS_LOGIN, true)
+    fun createLoginSession(email: String, islogin:Boolean) {
+        editor.putBoolean(IS_LOGIN, islogin)
         editor.putString(KEY_EMAIL, email)
         editor.commit()
     }
 
     fun checkLogin() {
         if(!this.isLoggedIn()) {
-            var i: Intent = Intent(con, MainActivity::class.java)
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            con.startActivity(i)
+            var intent = Intent(con, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            con.startActivity(intent)
         }
     }
 
     fun getUserDetails():HashMap<String, String> {
         var user:Map<String, String> = HashMap<String, String>()
-
         (user as HashMap).put(KEY_EMAIL, pref.getString(KEY_EMAIL, null).toString())
+
         return user
     }
 
     fun LoggoutUser() {
-        editor.clear()
+        //editor.clear()
+        editor.putBoolean(IS_LOGIN, false)
         editor.commit()
 
-        var i:Intent = Intent(con, LoginActivity::class.java)
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        con.startActivity(i)
+        var intent = Intent(con, LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        con.startActivity(intent)
     }
 
     fun isLoggedIn():Boolean {

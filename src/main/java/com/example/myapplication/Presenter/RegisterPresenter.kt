@@ -9,19 +9,22 @@ class RegisterPresenter(internal var iRegisterView: IRegisterView):IRegisterPres
         val registerCode = user.isDataValid()
 
         if(registerCode == 0) {
-            iRegisterView.onRegisterError("Email must not be null")
+            iRegisterView.onRegisterError("이메일 입력하세요.")
             return 0
         }
         else if(registerCode == 1) {
-            iRegisterView.onRegisterError("Wrong email address")
+            iRegisterView.onRegisterError("이메일 형식이 잘못되었습니다.")
             return 1
         }
         else if(registerCode == 2) {
-            iRegisterView.onRegisterError("Password must be grater than 6")
+            iRegisterView.onRegisterError("비밀번호 6자리 이상 입력하세요.")
             return 2
         }
+        else if(password != checkPassword) {
+            iRegisterView.onRegisterError("비밀번호가 일치하지 않습니다.")
+            return 3
+        }
         else {
-            iRegisterView.onRegisterSuccess("Register Success")
             return -1
         }
     }

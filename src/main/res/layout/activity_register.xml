@@ -38,7 +38,7 @@
 
 
         <Button
-            android:id="@+id/btn_reg1"
+            android:id="@+id/btn_reg"
             android:text="Register"
             android:padding="8dp"
             style="@style/Widget.AppCompat.Button.Colored"

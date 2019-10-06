@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.myapplication.Utils.SessionManager
-import kotlinx.android.synthetic.main.activity_login.*
+import com.example.myapplication.View.IRegisterView
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     lateinit var session:SessionManager
 
@@ -17,8 +17,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         session = SessionManager(applicationContext)
-
-        session.checkLogin()
 
         var user: HashMap<String, String> = session.getUserDetails()
 

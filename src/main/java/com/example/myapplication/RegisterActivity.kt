@@ -9,13 +9,27 @@ import androidx.appcompat.app.AlertDialog
 import com.example.myapplication.Database.AppDatabase
 import com.example.myapplication.Database.Helper.DatabaseWorker
 import com.example.myapplication.Model.User
+import com.example.myapplication.Presenter.ILoginPresenter
+import com.example.myapplication.Presenter.IRegisterPresenter
+import com.example.myapplication.Presenter.RegisterPresenter
+import com.example.myapplication.View.IRegisterView
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register.*
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity(), IRegisterView {
+
+    override fun onRegisterSuccess(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRegisterError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
     private var mDb: AppDatabase? = null
     private lateinit var mDatabaseWorker: DatabaseWorker
-    private val mUIHandler = Handler()
+
+    internal lateinit var registerPresenter: IRegisterPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,59 +40,42 @@ class RegisterActivity : AppCompatActivity() {
 
         mDb = AppDatabase.getInstance(this)
 
+        //init
+        registerPresenter = RegisterPresenter(this)
 
-        btn_reg1.setOnClickListener {
-            addUser()
-            Toast.makeText(this, "잘 저장됬습니다.", Toast.LENGTH_SHORT).show()
+        btn_reg.setOnClickListener {
+            val email = reg_email.text.toString()
+            val password = reg_password.text.toString()
+            val checkPassword = reg_check_password.text.toString()
+
+            var registerCode = registerPresenter.onRegister(email,password,checkPassword) // 회원가입 값 체크
+
+            if(registerCode == -1) {
+                addUser(email, password)
+            }
         }
     }
 
     private var currentId = 1
 
-    private fun addUser(){
-        val email = reg_email.text.toString()
-        val password = reg_password.text.toString()
-        val checkPassword = reg_check_password.text.toString()
-        if(password != checkPassword) {
-            showMessage("비밀번호가 다릅니다.")
-        }
-        if(!checkEmail(User(0, email, password))) {
-            insertDataInDb(User(currentId++, email, password))
-        } else{
-            showMessage("중복된 이메일이 있습니다.")
-        }
+    private fun addUser(email:String, password:String){
+
+        checkEmail(email, password)
     }
 
-    private fun showMessage(message:String) {
-        AlertDialog
-            .Builder(this)
-            .setMessage(message)
-            .create()
-            .show()
-    }
-
-    private fun checkEmail(user:User):Boolean {
-        var check = true
-
+    private fun checkEmail(email:String, password:String) {
         val task = Runnable {
-            val userData = mDb?.userDao()?.checkEmail(user.email)
+            val userData = mDb?.userDao()?.checkEmail(email)
             if (userData == null) {
-                check = false
+                mDb?.userDao()?.insert(User(currentId++, email, password))
+                Toast.makeText(this, "회원가입 되었습니다.", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                Toast.makeText(this, "중복된 이메일이 있습니다.", Toast.LENGTH_SHORT).show()
             }
         }
         mDatabaseWorker.postTask(task)
-        return check
     }
-
-
-    private fun insertDataInDb(user: User) {
-        val task = Runnable {
-            mDb?.userDao()?.insert(user)
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        mDatabaseWorker.postTask(task)
-    }
-
 }
